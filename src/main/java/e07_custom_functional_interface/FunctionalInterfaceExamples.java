@@ -39,9 +39,17 @@ public class FunctionalInterfaceExamples {
                 );
         System.out.println("expensiveProducts: " + expensiveProducts);
         System.out.println("discountedProducts: " + discountedProducts);
+
+        final Predicate<Product> lessThanOrEqualTo30 = product -> product.getPrice().compareTo(new BigDecimal("30")) <= 0;
+        System.out.println("discounted products ( <= $ 30) " +
+                filter(discountedProducts, lessThanOrEqualTo30)
+        );
+        System.out.println("discounted products ( <= $ 30) " +
+                filter(products, lessThanOrEqualTo30)
+        );
     }
 
-    private static <T> List<T> filter(List<T> list, Predicate<T> predicate) {
+    private static <T> List<T> filter(List<T> list, Predicate<? super T> predicate) {
         final List<T> result = new ArrayList<>();
         for (final T t : list) {
             if (predicate.test(t)) {
@@ -51,9 +59,9 @@ public class FunctionalInterfaceExamples {
         return result;
     }
 
-    private static <T,R> List<R> map(List<T> list, Function<T, R> function) {
+    private static <T, R> List<R> map(List<T> list, Function<T, R> function) {
         final List<R> result = new ArrayList<>();
-        for (final T t: list) {
+        for (final T t : list) {
             result.add(function.apply(t));
         }
         return result;
@@ -69,7 +77,7 @@ class Product {
 }
 
 @ToString(callSuper = true)
-class DiscountedProduct extends Product{
+class DiscountedProduct extends Product {
     public DiscountedProduct(final Long id, final String name, final BigDecimal price) {
         super(id, name, price);
     }
