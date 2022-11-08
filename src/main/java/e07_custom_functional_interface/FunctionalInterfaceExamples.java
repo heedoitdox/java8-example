@@ -47,6 +47,16 @@ public class FunctionalInterfaceExamples {
         System.out.println("discounted products ( <= $ 30) " +
                 filter(products, lessThanOrEqualTo30)
         );
+
+        final List<BigDecimal> prices = map(products, Product::getPrice);
+        BigDecimal total = BigDecimal.ZERO;
+        for (final BigDecimal price: prices) {
+            total = total.add(price);
+        }
+        System.out.println("total: " + total);
+
+        BigDecimal newTotal = total(products, Product::getPrice);
+        System.out.println("new total: " + newTotal);
     }
 
     private static <T> List<T> filter(List<T> list, Predicate<? super T> predicate) {
@@ -65,6 +75,14 @@ public class FunctionalInterfaceExamples {
             result.add(function.apply(t));
         }
         return result;
+    }
+
+    private static <T> BigDecimal total(List<T> list, Function<T, BigDecimal> mapper) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (final T t: list) {
+            total = total.add(mapper.apply(t));
+        }
+        return total;
     }
 }
 
