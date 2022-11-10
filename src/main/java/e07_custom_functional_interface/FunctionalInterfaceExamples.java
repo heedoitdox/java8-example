@@ -15,12 +15,18 @@ import java.util.function.Predicate;
 
 public class FunctionalInterfaceExamples {
     public static void main(String[] args) {
+        Product productA = new Product(1L, "A", new BigDecimal("10.00"));
+        Product productB = new Product(2L, "B", new BigDecimal("55.00"));
+        Product productC = new Product(3L, "C", new BigDecimal("18.00"));
+        Product productD = new Product(2L, "D", new BigDecimal("23.00"));
+        Product productE = new Product(3L, "E", new BigDecimal("110.00"));
+
         final List<Product> products = Arrays.asList(
-                new Product(1L, "A", new BigDecimal("10.00")),
-                new Product(2L, "B", new BigDecimal("55.00")),
-                new Product(3L, "C", new BigDecimal("18.00")),
-                new Product(4L, "D", new BigDecimal("23.00")),
-                new Product(5L, "E", new BigDecimal("110.00"))
+                productA,
+                productB,
+                productC,
+                productD,
+                productE
         );
 
         final BigDecimal twenty = new BigDecimal("20");
@@ -50,13 +56,20 @@ public class FunctionalInterfaceExamples {
 
         final List<BigDecimal> prices = map(products, Product::getPrice);
         BigDecimal total = BigDecimal.ZERO;
-        for (final BigDecimal price: prices) {
+        for (final BigDecimal price : prices) {
             total = total.add(price);
         }
         System.out.println("total: " + total);
 
         BigDecimal newTotal = total(products, Product::getPrice);
         System.out.println("new total: " + newTotal);
+
+        Order order = new Order(1L, "on-1234", Arrays.asList(
+                new OrderedItem(1L, productA, 2),
+                new OrderedItem(2L, productC, 8),
+                new OrderedItem(3L, productD, 10)
+        ));
+        System.out.println("order total: " + order.totalPrice());
     }
 
     private static <T> List<T> filter(List<T> list, Predicate<? super T> predicate) {
@@ -79,24 +92,48 @@ public class FunctionalInterfaceExamples {
 
     private static <T> BigDecimal total(List<T> list, Function<T, BigDecimal> mapper) {
         BigDecimal total = BigDecimal.ZERO;
-        for (final T t: list) {
+        for (final T t : list) {
             total = total.add(mapper.apply(t));
         }
         return total;
     }
-}
 
-@AllArgsConstructor
-@Data
-class Product {
-    private Long id;
-    private String name;
-    private BigDecimal price;
-}
+    @AllArgsConstructor
+    @Data
+    static class Product {
+        private Long id;
+        private String name;
+        private BigDecimal price;
+    }
 
-@ToString(callSuper = true)
-class DiscountedProduct extends Product {
-    public DiscountedProduct(final Long id, final String name, final BigDecimal price) {
-        super(id, name, price);
+    @ToString(callSuper = true)
+    static class DiscountedProduct extends Product {
+        public DiscountedProduct(final Long id, final String name, final BigDecimal price) {
+            super(id, name, price);
+        }
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class OrderedItem {
+        private Long id;
+        private Product product;
+        private int quantity;
+
+        public BigDecimal getItemTotal() {
+            return product.getPrice().multiply(new BigDecimal(quantity));
+        }
+    }
+
+    @AllArgsConstructor
+    @Data
+    static class Order {
+        private Long id;
+        private String orderNumber;
+        private List<OrderedItem> items;
+
+        public BigDecimal totalPrice() {
+           return total(items, OrderedItem::getItemTotal);
+        }
     }
 }
