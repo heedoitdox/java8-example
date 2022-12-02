@@ -22,11 +22,32 @@ public class StreamExamples2 {
         }
         System.out.println("Imperative Result: " + result);
 
+//        System.out.println("Functional Result : " +
+//                numbers.stream()
+//                        .filter(number -> number > 3 && number < 9)
+//                        .map(number -> number * 2)
+//                        .filter(number -> number > 10)
+//                        .findFirst()
+//        );
+
         System.out.println("Functional Result : " +
                 numbers.stream()
-                        .filter(number -> number > 3 && number < 9)
-                        .map(number -> number * 2)
-                        .filter(number -> number > 10)
+                        .filter(number -> {
+                            System.out.println("number > 3");
+                            return number > 3;
+                        })
+                        .filter(number -> {
+                            System.out.println("number < 9");
+                            return number < 9;
+                        })
+                        .map(number -> {
+                            System.out.println("number * 2");
+                            return number * 2;
+                        })
+                        .filter(number -> {
+                            System.out.println("number > 10");
+                            return number > 10;
+                        })
                         .findFirst()
         );
     }
