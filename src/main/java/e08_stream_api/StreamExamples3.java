@@ -34,7 +34,7 @@ public class StreamExamples3 {
                         .filter(i -> i > 2)
                         .map(i -> i * 2)
                         .map(i -> "#" + i)
-                        .collect(joining(", "))
+                        .collect(joining(", ", "[", "]")) // [#6, #6, #10, #10]
         );
     }
 }
