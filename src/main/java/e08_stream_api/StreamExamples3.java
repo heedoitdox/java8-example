@@ -37,5 +37,27 @@ public class StreamExamples3 {
                         .distinct()
                         .collect(joining(", ", "[", "]")) // [#6, #6, #10, #10]
         );
+
+        final Integer integer127 = 127;
+        System.out.println(
+                Stream.of(1,2,3,4,5, 127)
+                        .filter(i -> i == integer127)
+                        .findFirst()
+        );
+
+        // 캐싱되지않은 integer
+        final Integer integer128 = 128;
+        System.out.println(
+                Stream.of(1,2,3,4,5, 128)
+                        .filter(i -> i.equals(integer128))
+                        .findFirst()
+        );
+
+        final Integer integer3 = 3;
+        System.out.println(".filter(i -> i > integer3).count(): " +
+                Stream.of(1,2,3,4,5)
+                        .filter(i -> i > integer3)
+                        .count()
+        );
     }
 }
